@@ -1,0 +1,17 @@
+[project]
+name = "age-detection-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "soporteERP", email = "soporte.erp2@plataforma.com.co" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+age-detection-service = "age_detection_service:main"
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"

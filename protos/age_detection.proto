@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package age_detection;
+
+service AgeDetectionService {
+  rpc DetectAge(DetectAgeRequest) returns (DetectAgeResponse) {}
+}
+
+message DetectAgeRequest {
+  bytes image_data = 1;
+  string image_format = 2;
+  string request_id = 3;
+}
+
+message AgeGroupProbability {
+  string age_range = 1;
+  float confidence = 2;
+}
+
+message DetectAgeResponse {
+  string request_id = 1;
+  string predicted_age_range = 2;
+  float confidence = 3;
+  repeated AgeGroupProbability all_probabilities = 4;
+  bool success = 5;
+  string error_message = 6;
+}
