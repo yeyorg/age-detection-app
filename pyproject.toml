@@ -7,10 +7,13 @@ authors = [
     { name = "soporteERP", email = "soporte.erp2@plataforma.com.co" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pillow>=12.1.1",
+    "streamlit>=1.55.0",
+    "torch>=2.10.0",
+    "transformers>=5.3.0",
+]
 
-[project.scripts]
-age-detection-service = "age_detection_service:main"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
