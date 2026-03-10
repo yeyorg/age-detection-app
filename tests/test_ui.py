@@ -12,7 +12,7 @@ sys.modules["streamlit"] = mock_st
 sys.modules["torch"] = MagicMock()
 sys.modules["transformers"] = MagicMock()
 
-from age_detection_service.frontend.ui import SessionStateManager
+from age_detection_service.frontend.state import SessionStateManager
 
 class MockSessionState(dict):
     def __getattr__(self, key):
