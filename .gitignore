@@ -53,7 +53,20 @@ logs/
 *.sqlite
 *.sqlite3
 
+# MLflow local tracking artifacts
+mlruns/
+mlartifacts/
+
 # OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+
+#other files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.webp
