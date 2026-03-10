@@ -1,4 +1,4 @@
-.PHONY: clean clean-win clean-linux install frontend lint format test server
+.PHONY: clean clean-win clean-linux install frontend lint format test server experiment mlflow-ui register validate evaluate
 
 # Windows cleanup
 clean-win:
@@ -38,13 +38,28 @@ frontend:
 	uv run streamlit run src/age_detection_service/frontend/app.py
 
 lint:
-	uv run ruff check src tests
+	uv run ruff check .
 
 format:
-	uv run ruff format src tests
+	uv run ruff format .
+
+quality: format lint
+	@echo "Código limpio y verificado"
 
 test:
 	uv run pytest
 
+register:
+	uv run python scripts/register_model.py
+
+validate:
+	uv run python scripts/validate_model.py
+
+evaluate:
+	uv run python scripts/evaluate_model.py
+
+mlflow-ui:
+	uv run mlflow ui --port 5000
+
 server:
-	@echo "REST gateway implementation pending"
+	uv run uvicorn age_detection_service.backend.api:app --host 0.0.0.0 --port 8000
