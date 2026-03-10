@@ -6,33 +6,62 @@ from age_detection_service.backend.validation import validar_formulario
 from age_detection_service.backend.config import MAX_BIRTHDATE
 
 
-def _init_state():
-    if "page" not in st.session_state:
+class SessionStateManager:
+    """Gestiona el estado de la sesión de Streamlit de forma centralizada."""
+
+    @staticmethod
+    def init_state():
+        if "page" not in st.session_state:
+            st.session_state.page = "formulario"
+        if "user_data" not in st.session_state:
+            st.session_state.user_data = {}
+        if "result" not in st.session_state:
+            st.session_state.result = None
+
+    @staticmethod
+    def reset():
         st.session_state.page = "formulario"
-    if "user_data" not in st.session_state:
         st.session_state.user_data = {}
-    if "result" not in st.session_state:
         st.session_state.result = None
 
+    @staticmethod
+    def set_page(page_name):
+        st.session_state.page = page_name
 
-def _reset():
-    st.session_state.page = "formulario"
-    st.session_state.user_data = {}
-    st.session_state.result = None
+    @staticmethod
+    def set_user_data(data):
+        st.session_state.user_data = data
+
+    @staticmethod
+    def set_result(result):
+        st.session_state.result = result
+
+    @property
+    def page(self):
+        return st.session_state.page
+
+    @property
+    def user_data(self):
+        return st.session_state.user_data
+
+    @property
+    def result(self):
+        return st.session_state.result
 
 
 def render_formulario():
-    _init_state()
+    state = SessionStateManager()
+    state.init_state()
 
-    if st.session_state.page == "formulario":
-        _render_form()
-    elif st.session_state.page == "camara":
-        _render_camera()
-    elif st.session_state.page == "resultado":
-        _render_resultado()
+    if state.page == "formulario":
+        _render_user_form(state)
+    elif state.page == "camara":
+        _render_camera_capture(state)
+    elif state.page == "resultado":
+        _render_analysis_result(state)
 
 
-def _render_form():
+def _render_user_form(state):
     st.subheader("Datos del usuario")
 
     with st.form("registro_usuario"):
@@ -55,34 +84,52 @@ def _render_form():
     st.caption(f"Solo se permiten personas nacidas hasta el {MAX_BIRTHDATE.strftime('%d/%m/%Y')}.")
 
     if submitted:
-        errores, edad = validar_formulario(nombre, genero, cedula, fecha_nacimiento)
-
-        if errores:
-            for error in errores:
-                st.error(error)
-        else:
-            st.session_state.user_data = {
-                "nombre": nombre.strip(),
-                "genero": genero,
-                "cedula": cedula.strip(),
-                "fecha_nacimiento": fecha_nacimiento.strftime("%d/%m/%Y"),
-                "edad": edad
-            }
-            st.session_state.page = "camara"
-            st.rerun()
+        _handle_form_submission(state, nombre, genero, cedula, fecha_nacimiento)
 
 
-def _render_camera():
-    datos = st.session_state.user_data
+def _handle_form_submission(state, nombre, genero, cedula, fecha_nacimiento):
+    errores, edad = validar_formulario(nombre, genero, cedula, fecha_nacimiento)
 
+    if errores:
+        for error in errores:
+            st.error(error)
+    else:
+        user_data = {
+            "nombre": nombre.strip(),
+            "genero": genero,
+            "cedula": cedula.strip(),
+            "fecha_nacimiento": fecha_nacimiento.strftime("%d/%m/%Y"),
+            "edad": edad
+        }
+        state.set_user_data(user_data)
+        state.set_page("camara")
+        st.rerun()
+
+
+def _render_camera_capture(state):
+    datos = state.user_data
+
+    _render_user_welcome_header(state, datos)
+    _render_user_data_expander(datos)
+
+    st.subheader("Captura en vivo")
+    foto = st.camera_input("Toma una foto")
+
+    if foto is not None:
+        _handle_camera_input(state, foto)
+
+
+def _render_user_welcome_header(state, datos):
     col1, col2 = st.columns([4, 1])
     with col1:
         st.success(f"Bienvenido(a), {datos['nombre']}")
     with col2:
         if st.button("Salir"):
-            _reset()
+            state.reset()
             st.rerun()
 
+
+def _render_user_data_expander(datos):
     with st.expander("Ver datos ingresados"):
         st.write(f"**Nombre:** {datos['nombre']}")
         st.write(f"**Género:** {datos['genero']}")
@@ -90,40 +137,44 @@ def _render_camera():
         st.write(f"**Fecha de nacimiento:** {datos['fecha_nacimiento']}")
         st.write(f"**Edad calculada:** {datos['edad']} años")
 
-    st.subheader("Captura en vivo")
-    foto = st.camera_input("Toma una foto")
 
-    if foto is not None:
-        image = Image.open(foto)
-        st.image(image, caption="Imagen capturada", use_container_width=True)
+def _handle_camera_input(state, foto):
+    image = Image.open(foto)
+    st.image(image, caption="Imagen capturada", use_container_width=True)
 
-        if st.button("Analizar imagen"):
-            with st.spinner("Procesando imagen..."):
-                result = analyze_image(image)
+    if st.button("Analizar imagen"):
+        with st.spinner("Procesando imagen..."):
+            result = analyze_image(image)
 
-            st.session_state.result = result
-            st.session_state.page = "resultado"
-            st.rerun()
+        state.set_result(result)
+        state.set_page("resultado")
+        st.rerun()
 
 
-def _render_resultado():
-    datos = st.session_state.user_data
-    result = st.session_state.result
+def _render_analysis_result(state):
+    datos = state.user_data
+    result = state.result
 
     st.subheader("Resultado del análisis")
     st.write(f"**Rango de edad predicho:** {result['label']}")
     st.write(f"**Confianza:** {result['confidence']:.2f}%")
 
     if result["mayor"]:
-        st.balloons()
-        st.success(f"✅ {datos['nombre']}, tienes permitido el ingreso.")
-
-        if st.button("Volver al inicio"):
-            _reset()
-            st.rerun()
+        _render_success_result(state, datos)
     else:
-        st.error("🚫 No tienes permitido continuar ya que no cumples con la mayoría de edad.")
+        _render_error_result(state)
 
-        if st.button("Volver al inicio"):
-            _reset()
-            st.rerun()
+
+def _render_success_result(state, datos):
+    st.balloons()
+    st.success(f"✅ {datos['nombre']}, tienes permitido el ingreso.")
+    if st.button("Volver al inicio"):
+        state.reset()
+        st.rerun()
+
+
+def _render_error_result(state):
+    st.error("🚫 No tienes permitido continuar ya que no cumples con la mayoría de edad.")
+    if st.button("Volver al inicio"):
+        state.reset()
+        st.rerun()
