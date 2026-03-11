@@ -1,7 +1,11 @@
-import streamlit as st
 from datetime import date
-from age_detection_service.backend.validation import validar_formulario
-from age_detection_service.backend.config import MAX_BIRTHDATE
+
+import streamlit as st
+
+from age_detection_service.core.age_verification import (
+    MAX_BIRTHDATE,
+    validar_formulario,
+)
 
 
 def render_user_form(state):

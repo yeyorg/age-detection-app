@@ -1,6 +1,10 @@
+import io
+
 import streamlit as st
 from PIL import Image
-from age_detection_service.backend.server import analyze_image
+
+from age_detection_service.core.age_verification import es_mayor_segun_prediccion
+from age_detection_service.frontend.api_client import api_predict
 
 
 def render_camera_capture(state):
@@ -41,7 +45,19 @@ def _handle_camera_input(state, foto):
 
     if st.button("Analizar imagen"):
         with st.spinner("Procesando imagen..."):
-            result = analyze_image(image)
+            buf = io.BytesIO()
+            image.save(buf, format="JPEG")
+            data = api_predict(buf.getvalue(), "capture.jpg")
+
+            result = {
+                "label": data["predicted_age_range"],
+                "confidence": data["confidence_percent"],
+                "scores": {
+                    p["age_range"]: p["confidence_percent"]
+                    for p in data["all_probabilities"]
+                },
+                "mayor": es_mayor_segun_prediccion(data["predicted_age_range"]),
+            }
 
         state.set_result(result)
         state.set_page("resultado")
