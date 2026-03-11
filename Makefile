@@ -8,6 +8,7 @@ clean-win:
 	@if exist src\age_detection_service\frontend\__pycache__ rmdir /s /q src\age_detection_service\frontend\__pycache__
 	@if exist tests\__pycache__ rmdir /s /q tests\__pycache__
 	@if exist .pytest_cache rmdir /s /q .pytest_cache
+	@if exist mlruns rmdir /s /q mlruns
 	@if exist build rmdir /s /q build
 	@if exist dist rmdir /s /q dist
 	@for /r %%i in (*.pyc) do @if exist "%%i" del /q "%%i"
@@ -22,6 +23,7 @@ clean-linux:
 	rm -rf src/age_detection_service/frontend/__pycache__
 	rm -rf tests/__pycache__
 	rm -rf .pytest_cache
+	rm -rf mlruns
 	rm -rf build dist *.egg-info
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	find . -type d -name "__pycache__" -delete 2>/dev/null || true
@@ -31,6 +33,7 @@ clean-linux:
 clean: clean-win
 
 install:
+	uv lock
 	uv sync
 
 frontend:
