@@ -30,20 +30,20 @@ REGISTERED_MODEL_NAME = "age-detection-model"
 
 def predict_with_pipeline(pipeline, image: Image.Image):
     """Run prediction using the MLflow-loaded transformers pipeline.
-    
+
     Takes a PIL image, runs it through the transformers pipeline, and extracts the
     predicted label and confidence score from the top result.
-    
+
     Args:
         pipeline: transformers pipeline object loaded by MLflow, configured for
                   image classification.
         image (Image.Image): PIL Image object to classify.
-        
+
     Returns:
         Tuple[str, float]: A tuple containing:
             - label (str): The predicted age category label
             - confidence (float): The prediction confidence as a percentage (0-100)
-            
+
     Note:
         The confidence score from the pipeline (0-1) is converted to percentage.
     """
@@ -54,7 +54,7 @@ def predict_with_pipeline(pipeline, image: Image.Image):
 
 def main():
     """Load model from registry, validate functionality, and log metrics to MLflow.
-    
+
     Performs the following validation steps:
         1. Sets up MLflow tracking
         2. Constructs model URI for latest version from registry
@@ -63,16 +63,16 @@ def main():
         5. Runs inference and measures inference time
         6. Extracts predicted label and confidence
         7. Creates new MLflow run and logs validation metrics
-        
+
     Global variables used:
         REGISTERED_MODEL_NAME: Name of model to validate ("age-detection-model")
-        
+
     Returns:
         None. Validation metrics logged to MLflow and summary printed.
-        
+
     Prints:
         Model load time, prediction result, inference latency, and validation completion.
-        
+
     Raises:
         Any exception from model loading or inference will propagate.
     """

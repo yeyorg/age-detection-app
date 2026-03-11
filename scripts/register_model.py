@@ -34,7 +34,7 @@ REGISTERED_MODEL_NAME = "age-detection-model"
 
 def main():
     """Load model, collect performance metrics, and register in MLflow Model Registry.
-    
+
     Performs the following steps:
         1. Sets up MLflow tracking and experiment
         2. Loads pre-trained Siglip model and image processor
@@ -43,19 +43,19 @@ def main():
         5. Counts total model parameters
         6. Creates MLflow run and logs metrics/parameters
         7. Registers model in MLflow Model Registry
-        
+
     Global variables used:
         EXPERIMENT_NAME: MLflow experiment name ("age-detection")
         REGISTERED_MODEL_NAME: Name for registered model ("age-detection-model")
         MODEL_NAME: Pre-trained model identifier from HuggingFace
         ID2LABEL: Mapping from model class indices to age labels
-        
+
     Returns:
         None. Model is registered in MLflow and summary printed to console.
-        
+
     Prints:
         Registration confirmation and performance metrics summary.
-        
+
     Raises:
         Any exception from model loading or MLflow operations will propagate.
     """

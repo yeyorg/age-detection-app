@@ -49,18 +49,18 @@ MODEL_LABELS = list(ID2LABEL.values())
 
 def predict_batch(processor, model, images):
     """Run predictions on a list of PIL images.
-    
+
     Processes each image through the model using the provided processor, applies softmax
     to the logits, and returns the predicted age label for each image.
-    
+
     Args:
         processor: AutoImageProcessor instance for preprocessing images.
         model: SiglipForImageClassification model for age classification.
         images: List of PIL Image objects to predict on.
-        
+
     Returns:
         List[str]: Predicted age labels for each image, using the model's ID2LABEL mapping.
-    
+
     Note:
         Predictions are run in no-grad mode (inference mode) for efficiency.
     """
@@ -78,19 +78,19 @@ def predict_batch(processor, model, images):
 
 def plot_confusion_matrix(cm, labels, output_path):
     """Save confusion matrix as a PNG image using matplotlib.
-    
+
     Renders a heatmap-style confusion matrix with annotations showing the count at each cell.
     The background color intensity indicates the magnitude of values. The matrix is saved
     as a high-resolution PNG file.
-    
+
     Args:
         cm: numpy.ndarray of shape (n_classes, n_classes), the confusion matrix.
         labels: List[str] of class labels for axis annotations.
         output_path: str, path where the PNG image will be saved.
-        
+
     Returns:
         None. Saves the figure to output_path and prints confirmation message.
-        
+
     Note:
         Uses matplotlib's 'Agg' backend for non-interactive rendering.
         Figure size is (10, 8) inches at 150 dpi.
@@ -137,7 +137,7 @@ def plot_confusion_matrix(cm, labels, output_path):
 
 def main():
     """Main evaluation pipeline: load dataset, predict, and log results to MLflow.
-    
+
     Orchestrates the entire evaluation workflow:
         1. Sets up MLflow tracking and experiment
         2. Loads FairFace dataset and samples random images
@@ -147,7 +147,7 @@ def main():
         6. Computes evaluation metrics (accuracy, classification report, confusion matrix)
         7. Saves confusion matrix visualization
         8. Logs all metrics, parameters, and artifacts to MLflow
-        
+
     Global variables used:
         EXPERIMENT_NAME: MLflow experiment name ("age-detection")
         N_SAMPLES: Number of random samples to load from FairFace (200)
@@ -155,10 +155,10 @@ def main():
         MODEL_LABELS: List of model's age category labels
         MODEL_NAME: Pre-trained model identifier
         ID2LABEL: Mapping from model class indices to age labels
-        
+
     Returns:
         None. Results are logged to MLflow and visualizations saved to disk.
-        
+
     Prints:
         Status messages about data loading, model loading, and inference progress.
         Accuracy, inference time statistics, and classification report.
