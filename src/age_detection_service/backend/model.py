@@ -27,9 +27,6 @@ def predict_age(image: Image.Image):
     label = ID2LABEL[top_idx]
     confidence = float(probs[top_idx]) * 100
 
-    scores = {
-        ID2LABEL[i]: float(probs[i]) * 100
-        for i in range(len(probs))
-    }
+    scores = {ID2LABEL[i]: float(probs[i]) * 100 for i in range(len(probs))}
 
     return label, confidence, scores

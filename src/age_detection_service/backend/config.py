@@ -19,7 +19,7 @@ CLASES_PERMITIDAS = [
     "Edad 41-55",
     "Edad 56-65",
     "Edad 66-80",
-    "Edad 80+"
+    "Edad 80+",
 ]
 
 TODAY = date(2026, 3, 7)

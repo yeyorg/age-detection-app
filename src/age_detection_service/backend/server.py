@@ -6,9 +6,4 @@ def analyze_image(image):
     label, confidence, scores = predict_age(image)
     mayor = es_mayor_segun_prediccion(label)
 
-    return {
-        "label": label,
-        "confidence": confidence,
-        "scores": scores,
-        "mayor": mayor
-    }
+    return {"label": label, "confidence": confidence, "scores": scores, "mayor": mayor}
