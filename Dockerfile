@@ -4,5 +4,8 @@ WORKDIR /app
 COPY . /app
 
 RUN pip install --no-cache-dir uv
+RUN uv sync
 
-CMD ["uv", "run", "python", "-c", "print('Backend scaffold ready')"]
+EXPOSE 8000
+
+CMD ["uv", "run", "uvicorn", "age_detection_service.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
