@@ -65,7 +65,7 @@ mlflow-ui:
 	uv run mlflow ui --port 5000
 
 server:
-	@echo "REST gateway implementation pending"
+	uv run uvicorn age_detection_service.api.app:app --reload --host 0.0.0.0 --port 8000
 
 apirun:
-	uv run python src/age_detection_service/API/main.py
+	uv run uvicorn age_detection_service.api.app:app --host 0.0.0.0 --port 8000
