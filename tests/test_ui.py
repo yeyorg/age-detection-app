@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 import sys
 from pathlib import Path
 
@@ -14,6 +14,7 @@ sys.modules["transformers"] = MagicMock()
 
 from age_detection_service.frontend.state import SessionStateManager
 
+
 class MockSessionState(dict):
     def __getattr__(self, key):
         try:
@@ -23,6 +24,7 @@ class MockSessionState(dict):
 
     def __setattr__(self, key, value):
         self[key] = value
+
 
 class TestSessionStateManager(unittest.TestCase):
     def setUp(self):
@@ -37,11 +39,13 @@ class TestSessionStateManager(unittest.TestCase):
         self.assertEqual(mock_st.session_state["page"], "formulario")
 
     def test_reset_clears_state(self):
-        mock_st.session_state.update({
-            "page": "resultado",
-            "user_data": {"nombre": "Test"},
-            "result": {"mayor": True}
-        })
+        mock_st.session_state.update(
+            {
+                "page": "resultado",
+                "user_data": {"nombre": "Test"},
+                "result": {"mayor": True},
+            }
+        )
         SessionStateManager.reset()
         self.assertEqual(mock_st.session_state["page"], "formulario")
         self.assertEqual(mock_st.session_state["user_data"], {})
@@ -57,15 +61,18 @@ class TestSessionStateManager(unittest.TestCase):
         self.assertEqual(mock_st.session_state["user_data"], data)
 
     def test_properties_return_correct_values(self):
-        mock_st.session_state.update({
-            "page": "camara",
-            "user_data": {"nombre": "Maria"},
-            "result": {"label": "21-30"}
-        })
+        mock_st.session_state.update(
+            {
+                "page": "camara",
+                "user_data": {"nombre": "Maria"},
+                "result": {"label": "21-30"},
+            }
+        )
         state = SessionStateManager()
         self.assertEqual(state.page, "camara")
         self.assertEqual(state.user_data, {"nombre": "Maria"})
         self.assertEqual(state.result, {"label": "21-30"})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 def render_analysis_result(state):
     datos = state.user_data
     result = state.result
@@ -13,6 +14,7 @@ def render_analysis_result(state):
     else:
         _render_error_result(state)
 
+
 def _render_success_result(state, datos):
     st.balloons()
     st.success(f"✅ {datos['nombre']}, tienes permitido el ingreso.")
@@ -20,8 +22,11 @@ def _render_success_result(state, datos):
         state.reset()
         st.rerun()
 
+
 def _render_error_result(state):
-    st.error("🚫 No tienes permitido continuar ya que no cumples con la mayoría de edad.")
+    st.error(
+        "🚫 No tienes permitido continuar ya que no cumples con la mayoría de edad."
+    )
     if st.button("Volver al inicio"):
         state.reset()
         st.rerun()

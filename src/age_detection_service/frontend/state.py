@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 class SessionStateManager:
     """Gestiona el estado de la sesión de Streamlit de forma centralizada."""
 
