@@ -26,23 +26,10 @@ from datasets import load_dataset
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from transformers import AutoImageProcessor, SiglipForImageClassification
 
-from age_detection_service.backend.config import ID2LABEL, MODEL_NAME
+from age_detection_service.config import FAIRFACE_TO_MODEL, ID2LABEL, MODEL_NAME
 
 EXPERIMENT_NAME = "age-detection"
 N_SAMPLES = 200
-
-# FairFace age labels → model age labels
-FAIRFACE_TO_MODEL = {
-    "0-2": "Edad 01-10",
-    "3-9": "Edad 01-10",
-    "10-19": "Edad 11-20",
-    "20-29": "Edad 21-30",
-    "30-39": "Edad 31-40",
-    "40-49": "Edad 41-55",
-    "50-59": "Edad 56-65",
-    "60-69": "Edad 66-80",
-    "more than 70": "Edad 80+",
-}
 
 MODEL_LABELS = list(ID2LABEL.values())
 

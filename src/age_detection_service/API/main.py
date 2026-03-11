@@ -9,6 +9,8 @@ import io
 import uvicorn
 import traceback
 
+from age_detection_service.config import ID2LABEL, MODEL_NAME
+
 
 class ProbabilityItem(BaseModel):
     """Estructura de probabilidad por rango de edad."""
@@ -32,18 +34,6 @@ class PredictionResponse(BaseModel):
     success: bool = Field(default=True)
     filename: str = Field(..., description="Nombre del archivo")
 
-
-MODEL_NAME = "prithivMLmods/facial-age-detection"
-ID2LABEL = {
-    0: "Edad 01-10",
-    1: "Edad 11-20",
-    2: "Edad 21-30",
-    3: "Edad 31-40",
-    4: "Edad 41-55",
-    5: "Edad 56-65",
-    6: "Edad 66-80",
-    7: "Edad 80+",
-}
 
 app = FastAPI(
     title="Age Detection API",

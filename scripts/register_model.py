@@ -26,7 +26,7 @@ import torch
 from PIL import Image
 from transformers import AutoImageProcessor, SiglipForImageClassification
 
-from age_detection_service.backend.config import ID2LABEL, MODEL_NAME
+from age_detection_service.config import ID2LABEL, MODEL_NAME
 
 EXPERIMENT_NAME = "age-detection"
 REGISTERED_MODEL_NAME = "age-detection-model"

@@ -2,7 +2,7 @@ import torch
 import streamlit as st
 from transformers import AutoImageProcessor, SiglipForImageClassification
 from PIL import Image
-from age_detection_service.backend.config import MODEL_NAME, ID2LABEL
+from age_detection_service.config import MODEL_NAME, ID2LABEL
 
 
 @st.cache_resource
