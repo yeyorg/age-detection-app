@@ -49,5 +49,5 @@ test:
 server:
 	@echo "REST gateway implementation pending"
 
-APIRUN:
+apirun:
 	uv run python src/age_detection_service/API/main.py
