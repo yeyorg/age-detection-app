@@ -1,17 +1,9 @@
 from datetime import date
+from age_detection_service.config import ID2LABEL as SHARED_ID2LABEL, MODEL_NAME as SHARED_MODEL_NAME
 
-MODEL_NAME = "prithivMLmods/facial-age-detection"
-
-ID2LABEL = {
-    0: "Edad 01-10",
-    1: "Edad 11-20",
-    2: "Edad 21-30",
-    3: "Edad 31-40",
-    4: "Edad 41-55",
-    5: "Edad 56-65",
-    6: "Edad 66-80",
-    7: "Edad 80+",
-}
+# Backward-compatible aliases for modules still importing backend.config.
+MODEL_NAME = SHARED_MODEL_NAME
+ID2LABEL = SHARED_ID2LABEL
 
 CLASES_PERMITIDAS = [
     "Edad 21-30",
