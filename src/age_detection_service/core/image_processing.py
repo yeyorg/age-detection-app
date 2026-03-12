@@ -1,3 +1,9 @@
+"""Utilidades para decodificación y validación de imágenes subidas por el usuario.
+
+Provee funciones para leer archivos de imagen enviados a la API,
+validar su tipo MIME y tamaño, y convertirlos a objetos PIL en formato RGB.
+"""
+
 import io
 
 from fastapi import UploadFile, HTTPException
