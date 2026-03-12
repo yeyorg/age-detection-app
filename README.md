@@ -89,21 +89,6 @@ make frontend
 
 ---
 
-## 🖼️ Galería del Proyecto
-
-Aquí puedes encontrar capturas de pantalla de la aplicación en funcionamiento:
-
-> [!NOTE]
-> *Agrega aquí las imágenes del proyecto para mostrar la interfaz y los resultados.*
-
-<!-- 
-Ejemplo de cómo agregar imágenes:
-![Dashboard de Predicción](path/to/screenshot1.png)
-![Resultados de Verificación](path/to/screenshot2.png)
--->
-
----
-
 ## 👥 Equipo de Trabajo (Autores)
 
 Este proyecto fue desarrollado por:
