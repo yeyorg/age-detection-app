@@ -5,7 +5,35 @@ from age_detection_service.frontend.components.results import render_analysis_re
 
 
 def render_formulario():
-    """Orquestador principal de la interfaz de usuario."""
+    """
+    Función orquestadora principal de la interfaz de usuario.
+
+    Esta función controla el flujo de navegación dentro de la aplicación
+    de verificación de edad construida con Streamlit. Su responsabilidad
+    es determinar qué componente de la interfaz debe renderizarse según
+    el estado actual de la sesión.
+
+    Vistas del flujo:
+        - "formulario":
+            Muestra el formulario inicial donde el usuario ingresa sus datos
+            personales (nombre, género, cédula y fecha de nacimiento).
+
+        - "camara":
+            Muestra la interfaz de captura de imagen utilizando la cámara
+            del dispositivo del usuario. En esta etapa se toma la fotografía
+            que será enviada al backend para la predicción de edad.
+
+        - "resultado":
+            Muestra el resultado del análisis de la imagen, incluyendo
+            el rango de edad estimado, el nivel de confianza y la
+            validación de mayoría de edad.
+
+    Args:
+        None.
+
+    Returns:
+        None.
+    """
     state = SessionStateManager()
     state.init_state()
 
