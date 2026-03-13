@@ -9,7 +9,26 @@ logger = logging.getLogger("age_detection_service")
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
-    """Registra method, path, status y latencia de cada request."""
+    """
+    Middleware encargado de registrar información de cada solicitud HTTP procesada por la API.
+
+    Este middleware intercepta todas las peticiones entrantes a la aplicación
+    FastAPI y registra información relevante para monitoreo y depuración.
+
+    El tiempo de ejecución de la solicitud se calcula utilizando
+    `time.perf_counter`, lo que permite medir con alta precisión la
+    duración del procesamiento del request.
+
+    Hereda de:
+        BaseHTTPMiddleware (Starlette), lo que permite interceptar el
+        ciclo completo de la solicitud antes y después de que sea
+        procesada por los endpoints.
+
+    Notes:
+        - El `request_id` puede ser agregado previamente por otro middleware
+          dedicado a la generación de identificadores de solicitud.
+        - Si no existe `request.state.request_id`, se utilizará el valor "-".
+    """
 
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint

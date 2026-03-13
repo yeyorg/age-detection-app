@@ -30,7 +30,55 @@ async def verify_age(
     fecha_nacimiento: date = Form(...),
     model_service: ModelService = Depends(get_model_service),
 ):
-    """Verificación completa: predicción + validación de mayoría de edad."""
+    """
+    Endpoint que realiza la verificación completa de edad de un usuario.
+
+    El objetivo es determinar si el usuario cumple con la mayoría de edad
+    utilizando la predicción generada por el modelo.
+
+    Args:
+        request (Request):
+            Objeto de solicitud HTTP proporcionado por FastAPI. Se utiliza
+            para acceder al identificador único de la petición
+            (`request.state.request_id`).
+
+        image (UploadFile):
+            Imagen facial enviada en la solicitud HTTP mediante
+            `multipart/form-data`. Esta imagen será procesada por el modelo
+            de detección de edad.
+
+        nombre (str):
+            Nombre completo del usuario ingresado en el formulario.
+            Debe tener al menos 3 caracteres.
+
+        genero (str):
+            Género declarado por el usuario.
+
+        cedula (str):
+            Número de identificación del usuario.
+
+        fecha_nacimiento (date):
+            Fecha de nacimiento declarada por el usuario.
+
+        model_service (ModelService):
+            Servicio encargado de ejecutar el modelo de inferencia.
+            Se obtiene mediante el sistema de dependencias de FastAPI
+            (`Depends(get_model_service)`).
+
+    Returns:
+        VerificationResponse:
+            Objeto de respuesta que contiene:
+
+            - `request_id`: identificador único de la solicitud.
+            - `prediction`: resultado detallado de la predicción del modelo.
+            - `is_adult`: indicador booleano de si el usuario es mayor de edad.
+            - `user_summary`: resumen de los datos del usuario.
+
+    Raises:
+        HTTPException (400):
+            Se lanza cuando los datos del formulario no cumplen con
+            las reglas de validación definidas en `validar_formulario`.
+    """
     errores, edad = validar_formulario(nombre, genero, cedula, fecha_nacimiento)
     if errores:
         from fastapi import HTTPException

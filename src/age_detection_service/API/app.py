@@ -15,7 +15,26 @@ logger = logging.getLogger("age_detection_service")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Carga el modelo al arrancar y libera recursos al parar."""
+    """
+    Gestiona el ciclo de vida de la aplicación FastAPI.
+
+    Este contexto asincrónico se ejecuta automáticamente durante el
+    arranque y apagado de la aplicación. Su objetivo principal es
+    inicializar recursos necesarios antes de comenzar a atender
+    solicitudes HTTP.
+
+
+    Args:
+        app (FastAPI):
+            Instancia de la aplicación FastAPI que contiene el estado global
+            de la aplicación, incluyendo el servicio de modelo almacenado en
+            `app.state.model_service`.
+
+    Yields:
+        None:
+            Permite que la aplicación continúe ejecutándose mientras
+            el contexto permanece activo.
+    """
     logger.info("Cargando modelo de detección de edad...")
     app.state.model_service.load()
     logger.info("Modelo cargado exitosamente.")
@@ -23,7 +42,25 @@ async def lifespan(app: FastAPI):
 
 
 def create_app() -> FastAPI:
-    """Application factory — construye y configura la app FastAPI."""
+    """
+    Crea y configura la instancia principal de la aplicación FastAPI.
+
+    Esta función actúa como una *application factory*, responsable de
+    construir la aplicación y registrar todos sus componentes:
+
+        - Configuración de logging.
+        - Inicialización del estado global de la aplicación.
+        - Registro de middlewares.
+        - Configuración de manejadores globales de errores.
+        - Registro de routers de la API.
+
+    Este patrón permite una mejor organización del proyecto y facilita
+    la creación de instancias de la aplicación para testing o despliegue.
+
+    Returns:
+        FastAPI:
+            Instancia completamente configurada de la aplicación FastAPI.
+    """
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",

@@ -17,7 +17,56 @@ async def predict_age(
     image: UploadFile = File(...),
     model_service: ModelService = Depends(get_model_service),
 ):
-    """Predicción de rango de edad a partir de una imagen facial."""
+    """
+    Endpoint que realiza la predicción del rango de edad a partir de una imagen facial.
+
+    Este endpoint recibe una imagen enviada mediante una solicitud HTTP POST
+    en formato `multipart/form-data`. La imagen es validada y decodificada
+    antes de ser enviada al servicio de inferencia (`ModelService`) para
+    obtener la predicción del rango de edad.
+
+    Args:
+        request (Request):
+            Objeto de solicitud HTTP proporcionado por FastAPI.
+            Se utiliza principalmente para obtener el identificador
+            de la solicitud (`request_id`) almacenado en
+            `request.state.request_id`.
+
+        image (UploadFile):
+            Archivo de imagen enviado por el cliente mediante
+            `multipart/form-data`. Debe contener una imagen facial
+            válida que pueda ser procesada por el modelo de detección
+            de edad.
+
+        model_service (ModelService):
+            Instancia del servicio encargado de ejecutar el modelo
+            de inferencia. Se obtiene mediante el sistema de
+            dependencias de FastAPI (`Depends(get_model_service)`).
+
+    Returns:
+        PredictionResponse:
+            Objeto de respuesta estructurado que contiene:
+
+            - request_id (str):
+                Identificador único de la solicitud.
+
+            - predicted_age_range (str):
+                Rango de edad predicho por el modelo.
+
+            - confidence_percent (float):
+                Porcentaje de confianza asociado a la predicción
+                principal del modelo.
+
+            - all_probabilities (list[ProbabilityItem]):
+                Lista con las probabilidades de cada rango de edad
+                posible, representadas como objetos `ProbabilityItem`.
+
+            - filename (str):
+                Nombre del archivo de imagen recibido en la solicitud.
+
+            - inference_time_ms (float):
+                Tiempo total de inferencia del modelo en milisegundos.
+    """
     pil_image = await decode_and_validate_image(image)
 
     start = time.perf_counter()

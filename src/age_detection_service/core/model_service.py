@@ -12,7 +12,7 @@ from age_detection_service.config import MODEL_NAME, ID2LABEL
 
 
 class ModelService:
-    """Singleton-style service that owns model loading and inference."""
+    """Servicio de estilo Singleton que se encarga de la carga y la inferencia de modelos."""
 
     def __init__(self):
         """Inicializa el servicio sin cargar el modelo.
