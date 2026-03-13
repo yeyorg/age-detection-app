@@ -1,0 +1,59 @@
+# VCS
+.git/
+.gitignore
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.coverage
+coverage.xml
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Local environment and editor files
+.env
+.env.*
+.python-version
+.vscode/
+.idea/
+
+# Logs and local databases
+*.log
+logs/
+*.db
+*.sqlite
+*.sqlite3
+mlflow.db
+
+# Local MLflow artifacts
+mlruns/
+mlartifacts/
+
+# Test and local-only assets
+tests/
+confusion_matrix.png
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

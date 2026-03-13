@@ -1,4 +1,4 @@
-.PHONY: clean clean-win clean-linux install frontend lint format test server experiment mlflow-ui register validate evaluate
+.PHONY: clean clean-win clean-linux install frontend lint format quality test server apirun experiment mlflow-ui register validate evaluate cpup cpdown cplogs cpps cprestart
 
 # Windows cleanup
 clean-win:
@@ -69,3 +69,18 @@ server:
 
 apirun:
 	uv run uvicorn age_detection_service.api.app:app --host 0.0.0.0 --port 8000
+
+cpup:
+	docker compose up -d --build
+
+cpdown:
+	docker compose down
+
+cplogs:
+	docker compose logs -f
+
+cpps:
+	docker compose ps
+
+cprestart:
+	docker compose restart
