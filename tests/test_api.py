@@ -130,7 +130,7 @@ def test_predict_ok(mock_service_loaded):
     """
     response = client.post(
         "/api/v1/predict",
-        files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")}
+        files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")},
     )
     assert response.status_code in [200, 422]
 
@@ -157,7 +157,7 @@ def test_predict_modelo_no_cargado(mock_service_not_loaded):
     """
     response = client.post(
         "/api/v1/predict",
-        files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")}
+        files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")},
     )
     assert response.status_code in [503, 422]
 
@@ -184,8 +184,6 @@ def test_verify(mock_service_loaded):
         None.
     """
     response = client.post(
-        "/api/v1/verify",
-        files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")}
+        "/api/v1/verify", files={"file": ("test.jpg", b"fake-image-data", "image/jpeg")}
     )
     assert response.status_code in [200, 422]
-    

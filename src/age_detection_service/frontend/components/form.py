@@ -9,7 +9,6 @@ from age_detection_service.core.age_verification import (
 
 
 def render_user_form(state):
-
     """
     Renderiza el formulario de registro del usuario en la interfaz de Streamlit.
 
@@ -72,7 +71,6 @@ def render_user_form(state):
 
 
 def _handle_form_submission(state, nombre, genero, cedula, fecha_nacimiento):
-
     """
     Procesa los datos enviados desde el formulario de registro del usuario.
 
@@ -105,7 +103,7 @@ def _handle_form_submission(state, nombre, genero, cedula, fecha_nacimiento):
 
     Returns:
         None.
-          """
+    """
 
     errores, edad = validar_formulario(nombre, genero, cedula, fecha_nacimiento)
 
