@@ -49,7 +49,6 @@ def render_camera_capture(state):
 
 
 def _render_user_welcome_header(state, datos):
-
     """
     Muestra el encabezado de bienvenida del usuario en la interfaz.
 
@@ -86,7 +85,6 @@ def _render_user_welcome_header(state, datos):
 
 
 def _render_user_data_expander(datos):
-
     """
     Muestra un panel desplegable con los datos personales ingresados por el usuario.
 
@@ -120,7 +118,6 @@ def _render_user_data_expander(datos):
 
 
 def _handle_camera_input(state, foto):
-
     """
     Procesa la imagen capturada por la cámara y gestiona el flujo de análisis.
 

@@ -2,7 +2,6 @@ import streamlit as st
 
 
 def render_analysis_result(state):
-
     """
     Renderiza la vista de resultado del análisis de edad en la interfaz de Streamlit.
 
@@ -48,7 +47,6 @@ def render_analysis_result(state):
 
 
 def _render_success_result(state, datos):
-
     """
     Muestra el resultado positivo del análisis cuando el usuario es mayor de edad.
 
