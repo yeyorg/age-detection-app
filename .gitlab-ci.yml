@@ -23,14 +23,13 @@ variables:
 run_tests:
   extends: .uv-base
   stage: test
-  before_script:
-    - eval "$INSTALL_SYS_DEPS"
-    # Asegúrate de que uv instale tu paquete local
-    - uv sync --frozen
+  variables:
+    # 1. Forzamos a Python a mirar en src si la instalación falla por algún motivo
+    PYTHONPATH: "src"
+    # 2. Optimizamos para que los tests no intenten usar GPU en el Runner
+    CUDA_VISIBLE_DEVICES: "-1"
   script:
-    # Opción A: Ejecutar a través de 'uv run' (establece el path automáticamente)
-    - uv run pytest
-    # Opción B: Si prefieres usar tu Makefile, asegúrate de que use 'uv run' dentro
-    # o añade la raíz al PYTHONPATH:
-    - export PYTHONPATH=$PYTHONPATH:. 
-    - make test
+    # Sincronizamos e instalamos el proyecto actual en el venv del Runner
+    - uv sync --frozen
+    # Ejecutamos con python -m para resolver correctamente los namespaces de src
+    - uv run python -m pytest tests/
