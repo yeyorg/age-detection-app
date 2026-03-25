@@ -1,0 +1,24 @@
+variables:
+  UV_VERSION: "0.10.9"
+  PYTHON_VERSION: "3.12"
+  BASE_LAYER: "bookworm-slim"
+  UV_LINK_MODE: copy
+
+# ──────────────────────────────────────────────
+# STAGE 1: TEST
+# ──────────────────────────────────────────────
+run_tests:
+  stage: test
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
+  before_script:
+    - apt-get update && apt-get install -y make libglib2.0-0 libgl1 libxcb1
+  script:
+    - make test
+  cache:
+    key:
+      files:
+        - pyproject.toml
+    paths:
+      - .venv/
+  only:
+    - main
