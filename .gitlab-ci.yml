@@ -25,10 +25,12 @@ run_tests:
   stage: test
   before_script:
     - eval "$INSTALL_SYS_DEPS"
-    # ELIMINAMOS --no-cache para que los links funcionen
+    # Asegúrate de que uv instale tu paquete local
     - uv sync --frozen
   script:
+    # Opción A: Ejecutar a través de 'uv run' (establece el path automáticamente)
+    - uv run pytest
+    # Opción B: Si prefieres usar tu Makefile, asegúrate de que use 'uv run' dentro
+    # o añade la raíz al PYTHONPATH:
+    - export PYTHONPATH=$PYTHONPATH:. 
     - make test
-  after_script:
-    # Limpieza manual post-ejecución si el Runner es persistente
-    - rm -rf .venv
