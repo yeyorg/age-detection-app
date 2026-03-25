@@ -4,9 +4,8 @@ variables:
   BASE_LAYER: "trixie-slim"
   UV_CACHE_DIR: ".uv-cache"
   DOCKER_TLS_CERTDIR: "/certs"
-  UV_LINK_MODE: "symlink"
-  UV_COMPILE_BYTECODE: "0" #Evita generar archivos .pyc para ahorrar más espacio
-
+  UV_LINK_MODE: "hardlink"
+  PYTHONDONTWRITEBYTECODE: "1"
 .uv-base:
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
   variables:
@@ -26,7 +25,10 @@ run_tests:
   stage: test
   before_script:
     - eval "$INSTALL_SYS_DEPS"
-    # --no-install-project si no necesitas instalar el paquete actual, solo dependencias
-    - uv sync --frozen --no-cache # Prueba temporalmente --no-cache si el Runner es muy pequeño
+    # ELIMINAMOS --no-cache para que los links funcionen
+    - uv sync --frozen
   script:
     - make test
+  after_script:
+    # Limpieza manual post-ejecución si el Runner es persistente
+    - rm -rf .venv
