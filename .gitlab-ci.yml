@@ -1,28 +1,43 @@
 variables:
   UV_VERSION: "0.10.9"
   PYTHON_VERSION: "3.12"
-  BASE_LAYER: trixie-slim
-  UV_LINK_MODE: copy
+  BASE_LAYER: "trixie-slim"
+  UV_CACHE_DIR: ".uv-cache"
+  UV_LINK_MODE: "copy"
+  DOCKER_TLS_CERTDIR: "/certs"
 
 stages:
+  - .pre
   - test
- # - build
- # - deploy
-# ──────────────────────────────────────────────
-# STAGE 1: TEST
-# ──────────────────────────────────────────────
-run_tests:
-  stage: test
+  - build
+  - deploy
+
+# Plantilla base para evitar repetición
+.uv-base:
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
-  before_script:
-    - apt-get update && apt-get install -y make libglib2.0-0 libgl1 libxcb1
-  script:
-    - make test
+  variables:
+    INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && rm -rf /var/lib/apt/lists/*"
   cache:
     key:
       files:
+        - uv.lock
         - pyproject.toml
     paths:
-      - .venv/
-  only:
-    - main
+      - $UV_CACHE_DIR
+      - .venv
+
+# ──────────────────────────────────────────────
+# STAGE: TEST
+# ──────────────────────────────────────────────
+run_tests:
+  extends: .uv-base
+  stage: test
+  before_script:
+    - eval "$INSTALL_SYS_DEPS"
+    - uv sync --frozen
+  script:
+    - make test
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml # Si tu 'make test' genera un reporte JUnit
