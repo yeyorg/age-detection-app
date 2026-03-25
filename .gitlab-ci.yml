@@ -3,41 +3,30 @@ variables:
   PYTHON_VERSION: "3.12"
   BASE_LAYER: "trixie-slim"
   UV_CACHE_DIR: ".uv-cache"
-  UV_LINK_MODE: "copy"
   DOCKER_TLS_CERTDIR: "/certs"
+  UV_LINK_MODE: "symlink"
+  UV_COMPILE_BYTECODE: "0" #Evita generar archivos .pyc para ahorrar más espacio
 
-stages:
-  - .pre
-  - test
-  - build
-  - deploy
-
-# Plantilla base para evitar repetición
 .uv-base:
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
   variables:
-    INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && rm -rf /var/lib/apt/lists/*"
+    # Añadimos limpieza de apt al final del comando
+    INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && apt-get clean && rm -rf /var/lib/apt/lists/*"
   cache:
     key:
       files:
         - uv.lock
-        - pyproject.toml
     paths:
       - $UV_CACHE_DIR
-      - .venv
+    # IMPORTANTE: Si el espacio sigue siendo un problema, podemos limitar la caché
+    policy: pull-push 
 
-# ──────────────────────────────────────────────
-# STAGE: TEST
-# ──────────────────────────────────────────────
 run_tests:
   extends: .uv-base
   stage: test
   before_script:
     - eval "$INSTALL_SYS_DEPS"
-    - uv sync --frozen
+    # --no-install-project si no necesitas instalar el paquete actual, solo dependencias
+    - uv sync --frozen --no-cache # Prueba temporalmente --no-cache si el Runner es muy pequeño
   script:
     - make test
-  artifacts:
-    when: always
-    reports:
-      junit: report.xml # Si tu 'make test' genera un reporte JUnit
