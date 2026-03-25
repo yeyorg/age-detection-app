@@ -3,30 +3,32 @@ variables:
   PYTHON_VERSION: "3.12"
   BASE_LAYER: "trixie-slim"
   UV_CACHE_DIR: ".uv-cache"
-  DOCKER_TLS_CERTDIR: "/certs"
-  UV_LINK_MODE: "hardlink"
+  # Optimiza el performance de Python
+  UV_COMPILE_BYTECODE: "1"
+  UV_LINK_MODE: "copy" 
   PYTHONDONTWRITEBYTECODE: "1"
+  # Variable para dependencias de sistema (OpenCV, Pillow, etc.)
+  INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && apt-get clean && rm -rf /var/lib/apt/lists/*"
+
 .uv-base:
   image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
-  variables:
-    # Añadimos limpieza de apt al final del comando
-    INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && apt-get clean && rm -rf /var/lib/apt/lists/*"
+  before_script:
+    - eval "$INSTALL_SYS_DEPS"
   cache:
-    key:
-      files:
-        - uv.lock
-    paths:
-      - $UV_CACHE_DIR
-    # IMPORTANTE: Si el espacio sigue siendo un problema, podemos limitar la caché
-    policy: pull-push 
+    - key:
+        files:
+          - uv.lock
+        prefix: $CI_COMMIT_REF_SLUG
+      paths:
+        - $UV_CACHE_DIR
+      policy: pull-push
 
 run_tests:
   extends: .uv-base
-  stage: test
   variables:
-    # Forzamos el PYTHONPATH a la ruta absoluta de src en el Runner
     PYTHONPATH: "src"
   script:
-    - uv sync --frozen
-    # Usamos 'uv run' pero apuntando al módulo de forma que Python fuerce la resolución
-    - uv run python -m pytest
+    # Instalamos incluyendo el grupo 'dev' definido en tu pyproject.toml
+    - uv sync --frozen --group dev
+    # Ejecución modular de pytest
+    - uv run pytest tests/ --import-mode=importlib
