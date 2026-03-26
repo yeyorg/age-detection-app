@@ -3,11 +3,10 @@ variables:
   PYTHON_VERSION: "3.12"
   BASE_LAYER: "trixie-slim"
   UV_CACHE_DIR: ".uv-cache"
-  # Optimiza el performance de Python
   UV_COMPILE_BYTECODE: "1"
-  UV_LINK_MODE: "copy" 
+  # 1. Cambiamos a symlink para evitar duplicados
+  UV_LINK_MODE: "symlink" 
   PYTHONDONTWRITEBYTECODE: "1"
-  # Variable para dependencias de sistema (OpenCV, Pillow, etc.)
   INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && apt-get clean && rm -rf /var/lib/apt/lists/*"
 
 .uv-base:
@@ -18,17 +17,24 @@ variables:
     - key:
         files:
           - uv.lock
-        prefix: $CI_COMMIT_REF_SLUG
       paths:
         - $UV_CACHE_DIR
+      # 2. Usamos 'pull-push' solo si es necesario; si el espacio es crítico, considera 'pull'
       policy: pull-push
 
 run_tests:
   extends: .uv-base
+  stage: test
   variables:
     PYTHONPATH: "src"
   script:
-    # Instalamos incluyendo el grupo 'dev' definido en tu pyproject.toml
+    # 3. Instalación con limpieza inmediata
     - uv sync --frozen --group dev
-    # Ejecución modular de pytest
+    - uv cache prune --ci # Elimina archivos innecesarios para el entorno de CI
+    
+    # 4. Ejecución de tests
     - uv run pytest tests/ --import-mode=importlib
+  
+  # 5. Limpieza final para no saturar el almacenamiento del Runner
+  after_script:
+    - rm -rf .venv/
