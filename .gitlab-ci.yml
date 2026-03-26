@@ -24,16 +24,20 @@ variables:
 
 run_tests:
   extends: .uv-base
-  stage: test
   variables:
-    # Ya no necesitamos forzar PYTHONPATH si instalamos el paquete
-    PYTEST_ADDOPTS: "--import-mode=importlib"
+    # Mantenemos esto para ayudar a pytest a encontrar el paquete instalado
+    PYTHONPATH: "src" 
   script:
-    # '--install-project' asegura que 'src/age_detection_service' sea visible
-    - uv sync --frozen --group dev --install-project
+    # 1. Sincronización limpia (instala el proyecto por defecto)
+    - uv sync --frozen --group dev
     
-    # Ejecutamos con 'uv run' para usar el venv donde se instaló el paquete
-    - uv run pytest tests/
+    # 2. Verificación de diagnóstico (opcional pero recomendada para depurar)
+    - uv run python -c "import sys; print(sys.path)"
+    
+    # 3. Ejecución de tests
+    # Usamos 'python -m pytest' para garantizar que use el entorno virtual actual
+    - uv run python -m pytest tests/
   after_script:
     - rm -rf .venv/
+    # Eliminamos la caché para asegurar que no se agote el disco en el próximo run
     - rm -rf $UV_CACHE_DIR
