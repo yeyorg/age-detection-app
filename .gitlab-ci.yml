@@ -28,12 +28,15 @@ run_tests:
   variables:
     PYTHONPATH: "src"
   script:
-    # 3. Instalación con limpieza inmediata
+    # 3. Instalación 
     - uv sync --frozen --group dev
-    - uv cache prune --ci # Elimina archivos innecesarios para el entorno de CI
     
     # 4. Ejecución de tests
     - uv run pytest tests/ --import-mode=importlib
+
+    # 5. limpieza 
+    - uv cache prune --ci # Elimina archivos innecesarios para el entorno de CI
+
   
   # 5. Limpieza final para no saturar el almacenamiento del Runner
   after_script:
