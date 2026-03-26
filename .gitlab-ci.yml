@@ -25,18 +25,21 @@ variables:
 run_tests:
   extends: .uv-base
   variables:
-    # Eliminamos PYTHONPATH manual para evitar conflictos con la instalación editable
+    # Importante: No uses PYTHONPATH aquí, deja que la instalación maneje las rutas
     PYTHONDONTWRITEBYTECODE: "1"
   script:
-    # 1. Sincronizamos e instalamos el proyecto actual en modo editable (-)
-    # Esto registra src/age_detection_service como un paquete importable
+    # 1. Forzamos la instalación del proyecto actual en el venv
+    # El punto '.' indica que instale el paquete definido en el pyproject.toml
     - uv sync --frozen --group dev
+    - uv pip install -e . 
     
-    # 2. Verificamos que el paquete sea importable (si esto falla, el log nos dirá por qué)
-    - uv run python -c "import age_detection_service.api.app; print('Importación exitosa')"
+    # 2. Diagnóstico de rutas (Si falla, veremos exactamente dónde busca Python)
+    - uv run python -c "import sys; print('\n'.join(sys.path))"
     
-    # 3. Ejecutamos los tests. 
-    # Al estar instalado el proyecto, pytest encontrará 'age_detection_service' automáticamente.
+    # 3. Intento de importación con verbose para capturar errores de submódulos
+    - uv run python -c "import age_detection_service.api.app; print('✅ Importación exitosa')"
+    
+    # 4. Ejecución de tests
     - uv run pytest tests/
   after_script:
     - rm -rf .venv/
