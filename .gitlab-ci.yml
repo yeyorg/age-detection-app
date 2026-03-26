@@ -1,0 +1,46 @@
+variables:
+  UV_VERSION: "0.10.9"
+  PYTHON_VERSION: "3.12"
+  BASE_LAYER: "trixie-slim"
+  UV_CACHE_DIR: ".uv-cache"
+  UV_COMPILE_BYTECODE: "1"
+  # 1. Cambiamos a symlink para evitar duplicados
+  UV_LINK_MODE: "symlink" 
+  PYTHONDONTWRITEBYTECODE: "1"
+  INSTALL_SYS_DEPS: "apt-get update && apt-get install -y --no-install-recommends make libglib2.0-0 libgl1 libxcb1 && apt-get clean && rm -rf /var/lib/apt/lists/*"
+
+.uv-base:
+  image: ghcr.io/astral-sh/uv:$UV_VERSION-python$PYTHON_VERSION-$BASE_LAYER
+  before_script:
+    - eval "$INSTALL_SYS_DEPS"
+  cache:
+    - key:
+        files:
+          - uv.lock
+      paths:
+        - $UV_CACHE_DIR
+      # 2. Usamos 'pull-push' solo si es necesario; si el espacio es crítico, considera 'pull'
+      policy: pull-push
+
+run_tests:
+  extends: .uv-base
+  variables:
+    # Importante: No uses PYTHONPATH aquí, deja que la instalación maneje las rutas
+    PYTHONDONTWRITEBYTECODE: "1"
+  script:
+    # 1. Forzamos la instalación del proyecto actual en el venv
+    # El punto '.' indica que instale el paquete definido en el pyproject.toml
+    - uv sync --frozen --group dev
+    - uv pip install -e . 
+    
+    # 2. Diagnóstico de rutas (Si falla, veremos exactamente dónde busca Python)
+    - uv run python -c "import sys; print('\n'.join(sys.path))"
+    
+    # 3. Intento de importación con verbose para capturar errores de submódulos
+    - uv run python -c "import age_detection_service.api.app; print('Importación exitosa')"
+    
+    # 4. Ejecución de tests
+    - uv run pytest tests/
+  after_script:
+    - rm -rf .venv/
+    - rm -rf $UV_CACHE_DIR
