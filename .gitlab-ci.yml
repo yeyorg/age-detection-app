@@ -37,7 +37,7 @@ run_tests:
     - uv run python -c "import sys; print('\n'.join(sys.path))"
     
     # 3. Intento de importación con verbose para capturar errores de submódulos
-    - uv run python -c "import age_detection_service.api.app; print('Importación exitosaaaa')"
+    - uv run python -c "import age_detection_service.api.app; print('Importación exitosa')"
     
     # 4. Ejecución de tests
     - uv run pytest tests/
